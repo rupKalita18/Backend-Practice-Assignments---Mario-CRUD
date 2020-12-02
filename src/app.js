@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 // })
 
 app.get("/mario", (req, res) => {
-  const mario = marioModel
+  marioModel
     .find()
     .then((result) => {
       res.send(result);
@@ -29,16 +29,16 @@ app.get("/mario", (req, res) => {
 });
 
 app.get("/mario/:id", (req, res) => {
-  let id = req.body.params.id;
+  let id = req.params.id;
   console.log(id);
-  const mario = marioModel
-    .find({ _id: id })
+  marioModel
+    .findById({ _id: id })
     .then((result) => {
       res.send(result);
     })
     .catch((err) => {
       console.log(err);
-      res.status(400).send({ message: "error message" });
+      res.status(400).send({ message: "error.message" });
     });
 });
 
@@ -64,32 +64,31 @@ app.post("/mario", (req, res) => {
     });
 });
 
-app.patch("/mario/:id", (req, res) => {
-  const id = req.params.id,
-    updatebody = req.body,
-    mario = marioModel
-      .update({ _id: id }, { $set: updatebody })
-      .then((result) => {
-        res.send(result);
-      })
-      .catch((err) => {
-        res.status(400).json({ message: "error.message" });
-      });
+app.patch("/mario/:id", function (req, res) {
+  const id = req.params.id;
+  const updateobjec = req.body;
+  marioModel
+    .findByIdAndUpdate({ _id: id }, { $set: updateobjec })
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch((err) => {
+      res.status(400).json({ message: "error.message" });
+    });
 });
 
 app.delete("/mario/:id", (req, res) => {
-  console.log("hello");
-  const id = req.params.id,
-    mario = marioModel
-      .findByIdAndRemove({ _id: id })
-      .then((result) => {
-        console.log(result);
-        res.status(200).json({ message: "character deleted" });
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(400).json({ message: "error.message" });
-      });
+  const id = req.params.id;
+  marioModel
+    .findByIdAndRemove({ _id: id })
+    .then((result) => {
+      console.log(result);
+      res.status(200).json({ message: "character deleted" });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json({ message: "error.message" });
+    });
 });
 
 module.exports = app;
